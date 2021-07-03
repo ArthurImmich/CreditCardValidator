@@ -6,8 +6,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp (
-      title: 'Flutter Demo',
+    return MaterialApp(
+      title: 'CardValidator',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
