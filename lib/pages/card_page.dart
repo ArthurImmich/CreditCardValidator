@@ -53,154 +53,156 @@ class _CardPageState extends State<CardPage> {
     return Form(
       key: _formKey,
       child: Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 100),
-            child: Center(
-              child: SizedBox(
-                width: 300,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 1.586,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 8,
-                              blurRadius: 100,
-                            ),
-                          ],
+          body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 50),
+              child: Center(
+                child: SizedBox(
+                  width: 300,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1.586,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 8,
+                                blurRadius: 100,
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: 90,
+                                left: 20,
+                                child: Text(
+                                  textController.text.isNotEmpty
+                                      ? textController.text
+                                      : "XXXX XXXX XXXX XXXX",
+                                  style: TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Positioned(
+                                top: 20,
+                                right: 20,
+                                child: bandeira,
+                              )
+                            ],
+                          ),
                         ),
-                        child: Stack(
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 40),
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: textController,
+                          validator: (value) {
+                            isValid = isCardValid(value);
+                            if (isValid) {
+                              return 'Cartão Válido';
+                            } else {
+                              return 'Cartão Inválido';
+                            }
+                          },
+                          inputFormatters: [
+                            TextInputMask(mask: '9999 9999 9999 9999'),
+                          ],
+                          onChanged: (_) {
+                            setState(() {
+                              checkCardBanner(textController.text).then(
+                                  (imagemBandeira) => bandeira = imagemBandeira);
+                            });
+                          },
+                          obscureText: false,
+                          decoration: InputDecoration(
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: isValid ? Colors.green : Colors.red,
+                                width: 1,
+                              ),
+                            ),
+                            labelText: 'Número',
+                            hintText: 'XXXX XXXX XXXX XXXX',
+                            errorStyle: TextStyle(
+                                color: isValid ? Colors.green : Colors.red),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: isValid ? Colors.green : Colors.red,
+                                width: 1,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFF646464),
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFF646464),
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 25, horizontal: 15),
+                            suffixIcon: textController.text.isNotEmpty
+                                ? InkWell(
+                                    onTap: () => setState(
+                                      () => textController.clear(),
+                                    ),
+                                    child: Icon(
+                                      Icons.clear,
+                                      color: Color(0xFF757575),
+                                      size: 22,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Positioned(
-                              top: 90,
-                              left: 20,
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.lightBlue[900],
+                                minimumSize: Size(
+                                  120,
+                                  40,
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() => _formKey.currentState!.validate());
+                              },
                               child: Text(
-                                textController.text.isNotEmpty
-                                    ? textController.text
-                                    : "XXXX XXXX XXXX XXXX",
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.w600),
+                                "Validar",
+                                style: TextStyle(fontSize: 15),
                               ),
                             ),
-                            Positioned(
-                              top: 20,
-                              right: 20,
-                              child: bandeira,
-                            )
                           ],
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 40),
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: textController,
-                        validator: (value) {
-                          isValid = isCardValid(value);
-                          if (isValid) {
-                            return 'Cartão Válido';
-                          } else {
-                            return 'Cartão Inválido';
-                          }
-                        },
-                        inputFormatters: [
-                          TextInputMask(mask: '9999 9999 9999 9999'),
-                        ],
-                        onChanged: (_) {
-                          setState(() {
-                            checkCardBanner(textController.text).then(
-                                (imagemBandeira) => bandeira = imagemBandeira);
-                          });
-                        },
-                        obscureText: false,
-                        decoration: InputDecoration(
-                          errorBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: isValid ? Colors.green : Colors.red,
-                              width: 1,
-                            ),
-                          ),
-                          labelText: 'Número',
-                          hintText: 'XXXX XXXX XXXX XXXX',
-                          errorStyle: TextStyle(
-                              color: isValid ? Colors.green : Colors.red),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: isValid ? Colors.green : Colors.red,
-                              width: 1,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFF646464),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFF646464),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 25, horizontal: 15),
-                          suffixIcon: textController.text.isNotEmpty
-                              ? InkWell(
-                                  onTap: () => setState(
-                                    () => textController.clear(),
-                                  ),
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Color(0xFF757575),
-                                    size: 22,
-                                  ),
-                                )
-                              : null,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 25),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.lightBlue[900],
-                              minimumSize: Size(
-                                120,
-                                40,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() => _formKey.currentState!.validate());
-                            },
-                            child: Text(
-                              "Validar",
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        )
       ),
     );
   }
